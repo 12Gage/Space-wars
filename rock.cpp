@@ -32,7 +32,7 @@ void Rock::Reset(){
 	speed = rand() % (5) + 1;
 	speed *= 100;
 
-	posRect.x = rand() % (1024-posRect.w) + 1;
+	posRect.x = rand() % (1024) + 1;
 	posRect.y = - posRect.h;
 
 	pos_X = posRect.x;

@@ -47,6 +47,12 @@ string audio_dir = currentWorkingDirectory + "/Space-wars/";
 #endif
 
 #include "player.h"
+#include "rock.h"
+#include <vector>
+#include <stdlib.h>
+#include <time.h>
+
+vector<Rock> rockList;
 
 float deltaTime = 0.0;
 int thisTime = 0;
@@ -54,7 +60,9 @@ int lastTime = 0;
 
 SDL_Rect playerPos;
 
-int main(){
+int main(int argc, char* argv[]){
+
+	srand(time_t(NULL));
 
 	SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -96,6 +104,13 @@ int main(){
 
 	playerPos.x = 10;
 	playerPos.y = 10;
+
+	for(int i = 0; i < 1; i++)
+	{
+		Rock tmpRock(renderer, images_dir);
+
+		rockList.push_back(tmpRock);
+	}
 
 	while(!quit)
 	{
@@ -141,10 +156,19 @@ int main(){
 
 		Ship1.Update(deltaTime, renderer);
 
+		for(int i = 0; i < rockList.size(); i ++)
+		{
+			rockList[i].Update(deltaTime);
+		}
 
 		SDL_RenderClear(renderer);
 
 		SDL_RenderCopy(renderer,bkgd,NULL, &bkgdRect);
+
+		for(int i = 0; i < rockList.size(); i ++)
+		{
+			rockList[i].Draw(renderer);
+		}
 
 		Ship1.Draw(renderer);
 

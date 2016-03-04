@@ -75,7 +75,6 @@ public:
 
 	Sint16 Xvalue, Yvalue;
 
-
 	Ship (SDL_Renderer *renderer, int pNum, string filePath, string sudioPath, float x, float y);
 
 	void OnControllerAxis(Sint16 Xvalue, Sint16 Yvalue);
