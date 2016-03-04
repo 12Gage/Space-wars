@@ -26,13 +26,27 @@
 using namespace std;
 
 #include <vector>
-#include "missile.h";
+#include "missile.h"
 
 class Ship{
 
 public:
 
 	bool active;
+
+	int playerScore, oldScore, playerLives, oldLives;
+
+	TTF_Font *font;
+
+	SDL_Color colorP1 = {0,255,0,255};
+
+	SDL_Surface *scoreSurface, *livesSurface;
+
+	SDL_Texture *scoreTexture, *livesTexture;
+
+	SDL_Rect scorePos, livesPos;
+
+	string tempScore, tempLives;
 
 	vector<Missile> bulletList;
 
@@ -68,11 +82,15 @@ public:
 
 	void OnControllerButton(const SDL_ControllerButtonEvent event);
 
-	void Update(float deltaTime);
+	void Update(float deltaTime, SDL_Renderer *renderer);
 
 	void Draw(SDL_Renderer * renderer);
 
 	void Reset();
+
+	void UpdateScore(SDL_Renderer *renderer);
+
+	void UpdateLives(SDL_Renderer *renderer);
 
 private:
 

@@ -17,42 +17,37 @@ Missile::Missile(SDL_Renderer *renderer, string filePath, float x, float y, int 
 	posRect.y = y;
 }
 
-//void Missile::Start(SDL_Rect playerPos, SDL_Rect turretPos) {
-//
-//	player.x = playerPos.x;
-//	player.y = playerPos.y;
-//
-//	turret.x = turretPos.x;
-//	turret.y = turretPos.y;
-//
-//	distance = sqrt((player.x - turret.x * (player.x - turret.x) + (player.y - turret.y) * (player.y - turret.y)));
-//}
-//
-//void Missile::Reset()
-//{
-//	posRect.x = -1000;
-//
-//	pos_X = posRect.x;
-//
-//	active = false;
-//}
-//
-//void Missile::Draw(SDL_Renderer *renderer) {
-//	SDL_RenderCopy(renderer, texture, NULL, &posRect);
-//}
-//
-//void Missile::Update(float deltaTime)
-//{
-//	float vX = ((player.x - 32) - turret.x) / distance;
-//	float vY = ((player.y - 32) - turret.y) / distance;
-//
-//	pos_X += (vX * speed * deltaTime);
-//	pos_Y += (vY * speed * deltaTime);
-//
-//	posRect.x = (int)(pos_X + 0.5f);
-//	posRect.y = (int)(pos_Y + 0.5f);
-//
-//	if ((posRect.y < (0 - posRect.h)) || (posRect.y > 768) || (posRect.x < (0 - posRect.w)) || (posRect.x > 1024)) {
-//		Reset();
-//	}
-//}
+
+void Missile::Reset()
+{
+	posRect.x = -1000;
+
+	pos_X = posRect.x;
+
+	active = false;
+}
+
+void Missile::Draw(SDL_Renderer *renderer) {
+	SDL_RenderCopy(renderer, texture, NULL, &posRect);
+}
+
+void Missile::Update(float deltaTime)
+{
+	if (active) {
+
+		float radians = (shipangle * 3.14)/180;
+
+		float move_x = speed * cos(radians);
+		float move_y = speed * sin(radians);
+
+		pos_X += (move_x)*deltaTime;
+		pos_Y += (move_y)*deltaTime;
+
+		posRect.x = (int)(pos_X + 0.5f);
+		posRect.y = (int)(pos_Y + 0.5f);
+
+		if ((posRect.y < (0 - posRect.h)) || (posRect.y > 768) || (posRect.x < (0 - posRect.w)) || (posRect.x > 1024)) {
+			Reset();
+		}
+	}
+}

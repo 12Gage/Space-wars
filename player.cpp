@@ -12,6 +12,26 @@ Ship::Ship(SDL_Renderer *renderer, int pNum, string filePath, string audioPath, 
 
 	fire = Mix_LoadWAV((audioPath + "Laser.wav").c_str());
 
+	oldScore = 0;
+	playerScore = 0;
+	oldLives = 0;
+	playerLives = 3;
+
+	TTF_Init();
+
+	font = TTF_OpenFont((audioPath + "Long_Shot.ttf").c_str(), 40);
+
+	if(playerNum == 0){
+		scorePos.x = scorePos.y = 10;
+		livesPos.x = 10;
+		livesPos.y = 60;
+	}
+
+	UpdateScore(renderer);
+
+	UpdateLives(renderer);
+
+
 	if(playerNum == 0){
 		playerPath = filePath + "spaceship.png";
 	}
@@ -50,7 +70,64 @@ Ship::Ship(SDL_Renderer *renderer, int pNum, string filePath, string audioPath, 
 	}
 }
 
-void Ship::Update(float deltaTime)
+//update score
+void Ship::UpdateLives(SDL_Renderer *renderer){
+
+	string Result;
+	ostringstream convert;
+	convert << playerLives;
+	Result = convert.str();
+
+	tempLives = "Player Lives: " + Result;
+
+	if(playerNum == 0){
+		livesSurface = TTF_RenderText_Solid(font, tempLives.c_str(), colorP1);
+	}
+
+	livesTexture = SDL_CreateTextureFromSurface(renderer, livesSurface);
+
+	SDL_QueryTexture(livesTexture, NULL, NULL, &livesPos.w, &livesPos.h);
+
+	SDL_FreeSurface(livesSurface);
+
+	oldLives = playerLives;
+
+	if (playerLives == 0)
+	{
+		active = false;
+
+		posRect.x = posRect.y = -2000;
+
+		pos_X = pos_Y = -2000;
+	}
+
+}
+
+//update score
+void Ship::UpdateScore(SDL_Renderer *renderer){
+
+	string Result;
+	ostringstream convert;
+	convert << playerScore;
+	Result = convert.str();
+
+	tempScore = "Player Score: " + Result;
+
+	if(playerNum == 0){
+		scoreSurface = TTF_RenderText_Solid(font, tempScore.c_str(), colorP1);
+	}
+
+	scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+
+	SDL_QueryTexture(scoreTexture, NULL, NULL, &scorePos.w, &scorePos.h);
+
+	SDL_FreeSurface(scoreSurface);
+
+	oldScore = playerScore;
+
+}
+
+void Ship::Update(float deltaTime, SDL_Renderer *renderer)
 {
 	if(Xvalue != 0 || Yvalue != 0){
 		shipangle = atan2(Yvalue,Xvalue) * 180/3.14;
@@ -99,6 +176,17 @@ void Ship::Update(float deltaTime)
 			  bulletList[i].Update(deltaTime);
 		  }
 	  }
+		if(playerScore != oldScore){
+
+			UpdateScore(renderer);
+
+		}
+
+		if(playerLives != oldScore){
+
+			UpdateLives(renderer);
+
+		}
 
 }
 
@@ -116,6 +204,9 @@ void Ship::Draw(SDL_Renderer *renderer)
 
 	SDL_RenderCopyEx(renderer, texture, nullptr, &posRect, shipangle, &center, SDL_FLIP_NONE);
 
+	SDL_RenderCopy(renderer, scoreTexture, NULL, &scorePos);
+
+	SDL_RenderCopy(renderer, scoreTexture, NULL, &livesPos);
 }
 
 void Ship::OnControllerButton(const SDL_ControllerButtonEvent event)
@@ -128,16 +219,6 @@ void Ship::OnControllerButton(const SDL_ControllerButtonEvent event)
 
 		}
 
-	}
-
-	if(event.which == 1 && playerNum == 1)
-	{
-		if(event.button == 0)
-		{
-
-			CreateBullet();
-
-		}
 	}
 }
 

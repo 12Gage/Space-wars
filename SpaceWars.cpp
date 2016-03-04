@@ -80,7 +80,7 @@ int main(){
 
 	gGameController0 = SDL_GameControllerOpen(0);
 
-	Ship Ship1 = Ship(renderer, 0, images_dir.c_str(), audio_dir.c_str(), 50.0,50.0);
+	Ship Ship1 = Ship(renderer, 0, images_dir.c_str(), audio_dir.c_str(), 500.0,250.0);
 
 	SDL_Texture *bkgd = IMG_LoadTexture(renderer, (images_dir + "background.png").c_str());
 
@@ -139,7 +139,7 @@ int main(){
 
 		Ship1.OnControllerAxis(Xvalue,Yvalue);
 
-		Ship1.Update(deltaTime);
+		Ship1.Update(deltaTime, renderer);
 
 
 		SDL_RenderClear(renderer);
