@@ -202,7 +202,7 @@ void Ship::Draw(SDL_Renderer *renderer)
 		}
 	}
 
-	SDL_RenderCopyEx(renderer, texture, nullptr, &posRect, shipangle, &center, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(renderer, texture, NULL, &posRect, shipangle, &center, SDL_FLIP_NONE);
 
 	SDL_RenderCopy(renderer, scoreTexture, NULL, &scorePos);
 
