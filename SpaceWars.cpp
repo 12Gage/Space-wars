@@ -80,6 +80,15 @@ int main(int argc, char* argv[]){
 
 	bool quit = false;
 
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+
+	Mix_Music *bgm = Mix_LoadMUS((audio_dir + "background.mp3").c_str());
+
+	if (!Mix_PlayingMusic())
+		Mix_PlayMusic(bgm, -1);
+
+	Mix_Chunk *explosionSound = Mix_LoadWAV((audio_dir + "Explosion.wav").c_str());
+
 	SDL_Event e;
 
 	SDL_GameControllerEventState(SDL_ENABLE);
@@ -88,7 +97,7 @@ int main(int argc, char* argv[]){
 
 	gGameController0 = SDL_GameControllerOpen(0);
 
-	Ship Ship1 = Ship(renderer, 0, images_dir.c_str(), audio_dir.c_str(), 500.0,250.0);
+	Ship Ship1 = Ship(renderer, 0, images_dir.c_str(), audio_dir.c_str(), 400.0,250.0);
 
 	SDL_Texture *bkgd = IMG_LoadTexture(renderer, (images_dir + "background.png").c_str());
 
@@ -159,6 +168,43 @@ int main(int argc, char* argv[]){
 		for(int i = 0; i < rockList.size(); i ++)
 		{
 			rockList[i].Update(deltaTime);
+		}
+
+		for (int i = 0; i < Ship1.bulletList.size(); i++)
+		{
+			if (Ship1.bulletList[i].active == true) {
+
+				for (int j = 0; j < rockList.size(); j++)
+				{
+					if (SDL_HasIntersection(&Ship1.bulletList[i].posRect, &rockList[j].posRect)) {
+
+						Mix_PlayChannel(-1, explosionSound, 0);
+
+						//MakeExplosion(rockList[j].posRect.x, rockList[j].posRect.y);
+
+						rockList[j].Reset();
+
+						Ship1.bulletList[i].Reset();
+
+						Ship1.playerScore += 50;
+
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < rockList.size(); i++) {
+
+			if (SDL_HasIntersection(&Ship1.posRect, &rockList[i].posRect)) {
+
+				Mix_PlayChannel(-1, explosionSound, 0);
+
+				//MakeExplosion(Ship1.posRect.x - 32, Ship1.posRect.y - 32);
+
+				rockList[i].Reset();
+
+				Ship1.playerLives -= 1;
+			}
 		}
 
 		SDL_RenderClear(renderer);

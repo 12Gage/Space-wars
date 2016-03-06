@@ -58,7 +58,6 @@ Ship::Ship(SDL_Renderer *renderer, int pNum, string filePath, string audioPath, 
 	string bulletPath;
 
 	if(playerNum == 0){
-		//create the bullet 1 texture
 		bulletPath = filePath + "missile.png";
 	}
 
@@ -70,7 +69,22 @@ Ship::Ship(SDL_Renderer *renderer, int pNum, string filePath, string audioPath, 
 	}
 }
 
-//update score
+void Ship::Reset() {
+	if (playerNum == 0) {
+		posRect.x = 250.0;
+		posRect.y = 500.0;
+	}
+
+	pos_X = posRect.x;
+	pos_Y = posRect.y;
+	playerLives = 3;
+	playerScore = 0;
+	xDir = 0;
+	yDir = 0;
+	active = true;
+
+}
+
 void Ship::UpdateLives(SDL_Renderer *renderer){
 
 	string Result;
@@ -92,18 +106,8 @@ void Ship::UpdateLives(SDL_Renderer *renderer){
 
 	oldLives = playerLives;
 
-	if (playerLives == 0)
-	{
-		active = false;
-
-		posRect.x = posRect.y = -2000;
-
-		pos_X = pos_Y = -2000;
-	}
-
 }
 
-//update score
 void Ship::UpdateScore(SDL_Renderer *renderer){
 
 	string Result;
@@ -197,7 +201,6 @@ void Ship::Draw(SDL_Renderer *renderer)
 	{
 		if(bulletList[i].active){
 
-			//draw bullet
 			bulletList[i].Draw(renderer);
 		}
 	}
@@ -206,7 +209,7 @@ void Ship::Draw(SDL_Renderer *renderer)
 
 	SDL_RenderCopy(renderer, scoreTexture, NULL, &scorePos);
 
-	SDL_RenderCopy(renderer, scoreTexture, NULL, &livesPos);
+	SDL_RenderCopy(renderer, livesTexture, NULL, &livesPos);
 }
 
 void Ship::OnControllerButton(const SDL_ControllerButtonEvent event)
@@ -240,7 +243,6 @@ void Ship::OnControllerAxis(Sint16 X, Sint16 Y)
 
 }
 
-//create a bullet
 void Ship::CreateBullet(){
 
 	for(int i = 0; i < bulletList.size(); i ++)
@@ -249,7 +251,6 @@ void Ship::CreateBullet(){
 
 		Mix_PlayChannel(-1 ,fire, 0);
 
-		//set bullet to active
 		bulletList[i].active = true;
 
 		bulletList[i].posRect.x = (posRect.x + (posRect.w/2));
