@@ -48,12 +48,15 @@ string audio_dir = currentWorkingDirectory + "/Space-wars/";
 
 #include "player.h"
 #include "rock.h"
+#include"littleRock.h"
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
 #include "explosion.h"
 
 vector<Rock> rockList;
+
+vector<littleRock> rockList1;
 
 vector<Explode> explosionList;
 
@@ -139,6 +142,13 @@ int main(int argc, char* argv[]){
 		rockList.push_back(tmpRock);
 	}
 
+	for (int i = 0; i < 2; i++)
+	{
+		littleRock tmpRock(renderer, images_dir);
+
+		rockList1.push_back(tmpRock);
+	}
+
 	for (int i = 0; i < 20; i++)
 	{
 		Explode tmpExplode(renderer, images_dir, -1000, -1000);
@@ -195,6 +205,11 @@ int main(int argc, char* argv[]){
 			rockList[i].Update(deltaTime);
 		}
 
+		for (int i = 0; i < rockList1.size(); i++)
+		{
+			rockList1[i].Update(deltaTime);
+		}
+
 		for (int i = 0; i < Ship1.bulletList.size(); i++)
 		{
 			if (Ship1.bulletList[i].active == true) {
@@ -218,6 +233,29 @@ int main(int argc, char* argv[]){
 			}
 		}
 
+		for (int i = 0; i < Ship1.bulletList.size(); i++)
+		{
+			if (Ship1.bulletList[i].active == true) {
+
+				for (int j = 0; j < rockList1.size(); j++)
+				{
+					if (SDL_HasIntersection(&Ship1.bulletList[i].posRect, &rockList1[j].posRect)) {
+
+						Mix_PlayChannel(-1, explosionSound, 0);
+
+						MakeExplosion(rockList1[j].posRect.x, rockList1[j].posRect.y);
+
+						rockList1[j].Reset();
+
+						Ship1.bulletList[i].Reset();
+
+						Ship1.playerScore += 100;
+
+					}
+				}
+			}
+		}
+
 		for (int i = 0; i < rockList.size(); i++) {
 
 			if (SDL_HasIntersection(&Ship1.posRect, &rockList[i].posRect)) {
@@ -227,6 +265,20 @@ int main(int argc, char* argv[]){
 				MakeExplosion(Ship1.posRect.x - 32, Ship1.posRect.y - 32);
 
 				rockList[i].Reset();
+
+				Ship1.playerLives -= 1;
+			}
+		}
+
+		for (int i = 0; i < rockList1.size(); i++) {
+
+			if (SDL_HasIntersection(&Ship1.posRect, &rockList1[i].posRect)) {
+
+				Mix_PlayChannel(-1, explosionSound, 0);
+
+				MakeExplosion(Ship1.posRect.x - 32, Ship1.posRect.y - 32);
+
+				rockList1[i].Reset();
 
 				Ship1.playerLives -= 1;
 			}
@@ -247,6 +299,11 @@ int main(int argc, char* argv[]){
 		for(int i = 0; i < rockList.size(); i ++)
 		{
 			rockList[i].Draw(renderer);
+		}
+
+		for (int i = 0; i < rockList1.size(); i++)
+		{
+			rockList1[i].Draw(renderer);
 		}
 
 		for (int i = 0; i < explosionList.size(); i++)
