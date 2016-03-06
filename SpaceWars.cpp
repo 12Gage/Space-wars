@@ -51,8 +51,26 @@ string audio_dir = currentWorkingDirectory + "/Space-wars/";
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
+#include "explosion.h"
 
 vector<Rock> rockList;
+
+vector<Explode> explosionList;
+
+void MakeExplosion(int x, int y) {
+	for (int i = 0; i < explosionList.size(); i++)
+	{
+		if (explosionList[i].active == false) {
+
+			explosionList[i].active = true;
+
+			explosionList[i].posRect.x = x;
+			explosionList[i].posRect.y = y;
+
+			break;
+		}
+	}
+}
 
 float deltaTime = 0.0;
 int thisTime = 0;
@@ -121,6 +139,13 @@ int main(int argc, char* argv[]){
 		rockList.push_back(tmpRock);
 	}
 
+	for (int i = 0; i < 20; i++)
+	{
+		Explode tmpExplode(renderer, images_dir, -1000, -1000);
+
+		explosionList.push_back(tmpExplode);
+	}
+
 	while(!quit)
 	{
 		thisTime = SDL_GetTicks();
@@ -180,7 +205,7 @@ int main(int argc, char* argv[]){
 
 						Mix_PlayChannel(-1, explosionSound, 0);
 
-						//MakeExplosion(rockList[j].posRect.x, rockList[j].posRect.y);
+						MakeExplosion(rockList[j].posRect.x, rockList[j].posRect.y);
 
 						rockList[j].Reset();
 
@@ -199,11 +224,19 @@ int main(int argc, char* argv[]){
 
 				Mix_PlayChannel(-1, explosionSound, 0);
 
-				//MakeExplosion(Ship1.posRect.x - 32, Ship1.posRect.y - 32);
+				MakeExplosion(Ship1.posRect.x - 32, Ship1.posRect.y - 32);
 
 				rockList[i].Reset();
 
 				Ship1.playerLives -= 1;
+			}
+		}
+
+		for (int i = 0; i < explosionList.size(); i++)
+		{
+			if (explosionList[i].active == true) {
+
+				explosionList[i].Update(deltaTime);
 			}
 		}
 
@@ -214,6 +247,14 @@ int main(int argc, char* argv[]){
 		for(int i = 0; i < rockList.size(); i ++)
 		{
 			rockList[i].Draw(renderer);
+		}
+
+		for (int i = 0; i < explosionList.size(); i++)
+		{
+			if (explosionList[i].active == true) {
+
+				explosionList[i].Draw(renderer);
+			}
 		}
 
 		Ship1.Draw(renderer);
