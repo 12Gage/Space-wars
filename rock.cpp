@@ -17,7 +17,7 @@ Rock::Rock(SDL_Renderer *renderer, string filePath)
 
 	Reset();
 
-	xDir = 0;
+	xDir = -1;
 	yDir = 1;
 
 	angle = rand() % (360);
@@ -42,9 +42,18 @@ void Rock::Reset(){
 
 void Rock::Update(float deltaTime)
 {
+	pos_X += (speed *xDir) * deltaTime;
+
+	posRect.x = (int)(pos_X + 0.5f);
+
 	pos_Y += (speed *yDir) * deltaTime;
 
 	posRect.y = (int) (pos_Y + 0.5f);
+
+	if (posRect.x < 0) {
+
+		Reset();
+	}
 
 	if(posRect.y > 768){
 
@@ -52,26 +61,6 @@ void Rock::Update(float deltaTime)
 	}
 
 	angle += .1;
-
-	if (posRect.x < 0)
-	{
-		
-	}
-
-	if (posRect.x > 1024)
-	{
-
-	}
-
-	if (posRect.y < 0)
-	{
-
-	}
-
-	if (posRect.y > 768)
-	{
-
-	}
 
 }
 

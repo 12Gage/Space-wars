@@ -17,7 +17,7 @@ littleRock::littleRock(SDL_Renderer *renderer, string filePath)
 
 	Reset();
 
-	xDir = 0;
+	xDir = 1;
 	yDir = 1;
 
 	angle = rand() % (360);
@@ -41,9 +41,18 @@ void littleRock::Reset() {
 
 void littleRock::Update(float deltaTime)
 {
+	pos_X += (speed *xDir) * deltaTime;
+
+	posRect.x = (int)(pos_X + 0.5f);
+
 	pos_Y += (speed *yDir) * deltaTime;
 
 	posRect.y = (int)(pos_Y + 0.5f);
+
+	if (posRect.x > 1024) {
+
+		Reset();
+	}
 
 	if (posRect.y > 768) {
 
